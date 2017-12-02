@@ -14,10 +14,5 @@ def bar(dependencies, possible_dependencies):
 def baz(dependencies, possible_dependencies):
     return dependencies['bar']
 
-t = []
-
 def main(args):
-    t.append(1)
     print(_collector.mkgraph(args))
-    if len(t) > 1:
-        raise ValueError(args)
