@@ -10,11 +10,28 @@ import gather
 class DependencyCollector(object):
 
     _collector = attr.ib(default=attr.Factory(functools.partial(gather.Collector, depth=1)), init=False)
+    _command_collector = attr.ib(default=attr.Factory(functools.partial(gather.Collector, depth=1)), init=False)
 
-    def register(self,
-                 name=None,
-                 dependencies=pyrsistent.v(),
-                 possible_dependencies=pyrsistent.v()):
+    def command(self,
+                name=None,
+                dependencies=pyrsistent.v()):
+        transform = transform=gather.Wrapper.glue(dependencies)
+        ret = self._command_collector.register(name, transform=transform)
+        return ret
+
+    def run(self, name, args, override_dependencies=pyrsistent.m()):
+        collection = self._command_collector.collect() 
+        command = collection[name]
+        func = command.original
+        graph = self.mkgraph(command.extra)
+        graph.update(override_dependencies)
+        return func(args, graph)
+        
+
+    def dependency(self,
+                   name=None,
+                   dependencies=pyrsistent.v(),
+                   possible_dependencies=pyrsistent.v()):
         glue = (dependencies, possible_dependencies)
         transform = transform=gather.Wrapper.glue(glue)
         ret = self._collector.register(name, transform=transform)
