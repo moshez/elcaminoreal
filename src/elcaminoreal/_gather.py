@@ -21,7 +21,8 @@ class Commands(object):
         ret = self._command_collector.register(name, transform=transform)
         return ret
 
-    def run(self, name, args, override_dependencies=pyrsistent.m()):
+    def run(self, args, override_dependencies=pyrsistent.m()):
+        name, args = args[0], args[1:]
         collection = self._command_collector.collect() 
         command = collection[name]
         func = command.original
