@@ -26,5 +26,9 @@ def tuck(dependencies, possible_dependencies):
 def show(args, dependencies):
     print(args, dependencies)
 
+@_collector.command(dependencies=['bar'])
+def gowoo(args, dependencies):
+    print("woo", args, dependencies)
+
 def main(args):
     return _collector.run(args[1], args[2:])
