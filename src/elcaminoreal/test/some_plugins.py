@@ -14,5 +14,13 @@ def bar(dependencies, possible_dependencies):
 def baz(dependencies, possible_dependencies):
     return dependencies['bar']
 
+@_collector.register(dependencies=['tuck'])
+def robin(dependencies, possible_dependencies):
+    return dependencies['tuck']
+
+@_collector.register(dependencies=['robin'])
+def tuck(dependencies, possible_dependencies):
+    return dependencies['robin']
+
 def main(args):
     print(_collector.mkgraph(args))
