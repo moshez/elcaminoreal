@@ -1,6 +1,8 @@
+import argparse
+
 from elcaminoreal import _gather as gather
 
-_collector = gather.DependencyCollector()
+_collector = gather.Commands()
 
 @_collector.dependency(dependencies=["bar"])
 def foo(dependencies, possible_dependencies):
@@ -22,11 +24,18 @@ def robin(dependencies, possible_dependencies):
 def tuck(dependencies, possible_dependencies):
     return dependencies['robin']
 
-@_collector.command(dependencies=['foo'])
+parser = argparse.ArgumentParser()
+parser.add_argument('lala')
+@_collector.command(dependencies=['foo'],
+                    parser=parser.parse_args
+                    )
 def show(args, dependencies):
     print(args, dependencies)
 
-@_collector.command(dependencies=['bar'])
+parser = argparse.ArgumentParser()
+parser.add_argument('wooo')
+@_collector.command(dependencies=['bar'],
+                    parser=parser.parse_args)
 def gowoo(args, dependencies):
     print("woo", args, dependencies)
 

@@ -1,3 +1,4 @@
+import argparse
 import functools
 
 import attr
@@ -7,15 +8,16 @@ import pyrsistent
 import gather
 
 @attr.s(frozen=True)
-class DependencyCollector(object):
+class Commands(object):
 
     _collector = attr.ib(default=attr.Factory(functools.partial(gather.Collector, depth=1)), init=False)
     _command_collector = attr.ib(default=attr.Factory(functools.partial(gather.Collector, depth=1)), init=False)
 
     def command(self,
                 name=None,
+                parser=argparse.ArgumentParser(),
                 dependencies=pyrsistent.v()):
-        transform = transform=gather.Wrapper.glue(dependencies)
+        transform = gather.Wrapper.glue((dependencies, parser))
         ret = self._command_collector.register(name, transform=transform)
         return ret
 
@@ -23,10 +25,11 @@ class DependencyCollector(object):
         collection = self._command_collector.collect() 
         command = collection[name]
         func = command.original
-        graph = self.mkgraph(command.extra)
+        dependencies, parser = command.extra
+        graph = self.mkgraph(dependencies)
         graph.update(override_dependencies)
-        return func(args, graph)
-        
+        parsed = parser(args)
+        return func(parsed, graph)
 
     def dependency(self,
                    name=None,
