@@ -24,17 +24,16 @@ def robin(dependencies, possible_dependencies):
 def tuck(dependencies, possible_dependencies):
     return dependencies['robin']
 
-parser = argparse.ArgumentParser()
-parser.add_argument('lala')
 @COMMANDS.command(dependencies=['foo'],
-                    parser=parser.parse_args
-                    )
+                  parser=elcaminoreal.argparser(
+                      elcaminoreal.argument('lala'),
+                  ))
 def show(args, dependencies):
     print(args, dependencies)
 
-parser = argparse.ArgumentParser()
-parser.add_argument('wooo')
 @COMMANDS.command(dependencies=['bar'],
-                    parser=parser.parse_args)
+                  parser=elcaminoreal.argparser(
+                      elcaminoreal.argument('wooo'),
+                  ))
 def gowoo(args, dependencies):
     print("woo", args, dependencies)
