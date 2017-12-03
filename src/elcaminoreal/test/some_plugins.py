@@ -103,6 +103,7 @@ def gowoo(args, dependencies):
     """
     dependencies['print']("woo", args, dependencies)
 
+
 @COMMANDS.command(dependencies=['print'],
                   parser=elcaminoreal.argparser(
                       elcaminoreal.argument('--foo', required=False),
