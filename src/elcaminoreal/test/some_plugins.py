@@ -93,7 +93,7 @@ def show(args, dependencies):
     dependencies['print'](args, dependencies)
 
 
-@COMMANDS.command(dependencies=['bar'],
+@COMMANDS.command(dependencies=['bar', 'print'],
                   parser=elcaminoreal.argparser(
                       elcaminoreal.argument('wooo'),
                   ))
@@ -102,3 +102,14 @@ def gowoo(args, dependencies):
     Print 'woo' and then arguments.
     """
     dependencies['print']("woo", args, dependencies)
+
+@COMMANDS.command(dependencies=['print'],
+                  parser=elcaminoreal.argparser(
+                      elcaminoreal.argument('--foo', required=False),
+                      elcaminoreal.argument('--bar', required=True),
+                  ))
+def interesting_args(args, dependencies):
+    """
+    Print arguments.
+    """
+    dependencies['print'](args.foo, args.bar)

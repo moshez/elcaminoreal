@@ -65,3 +65,25 @@ class RunnerResolverTester(unittest.TestCase):
         self.assertIn('hee', args)
         self.assertIn('foo', deps)
         self.assertIn('bar', deps)
+
+    def test_args(self):
+        """
+        Argument parsing respects required/not-required
+        """
+        output = []
+
+        def _my_print(*args):
+            output.append(' '.join(map(str, args)))
+        some_plugins.COMMANDS.run(['interesting_args', '--bar', 'ddd'],
+                                  override_dependencies=dict(print=_my_print))
+        self.assertEquals(len(output), 1)
+        my_foo, my_bar = output.pop().split(' ')
+        self.assertEquals(my_foo, 'None')
+        self.assertEquals(my_bar, 'ddd')
+
+    def test_required(self):
+        """
+        Argument parsing without required arguments fails`
+        """
+        with self.assertRaises(BaseException):
+            some_plugins.COMMANDS.run(['interesting_args', '--foo', 'ddd'])
