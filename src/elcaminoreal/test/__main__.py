@@ -1,3 +1,8 @@
+"""
+El Camino Real Test Main
+
+Run the built-in test El Camino Real plugins.
+"""
 import sys
 from elcaminoreal.test import some_plugins
 
