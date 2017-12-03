@@ -10,6 +10,10 @@ import gather
 @attr.s(frozen=True)
 class Commands(object):
 
+    """
+    Collect commands and stuff
+    """
+
     _collector = attr.ib(default=attr.Factory(functools.partial(gather.Collector, depth=1)), init=False)
     _command_collector = attr.ib(default=attr.Factory(functools.partial(gather.Collector, depth=1)), init=False)
 
