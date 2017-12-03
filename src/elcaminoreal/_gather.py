@@ -1,3 +1,6 @@
+"""
+Gather dependencies and commands
+"""
 import argparse
 import functools
 
@@ -7,27 +10,39 @@ import pyrsistent
 
 import gather
 
+_COLLECTOR_FACTORY = gather.Collector(functools.partial(gather.Collector,
+                                                        depth=1))
+
+
 @attr.s(frozen=True)
 class Commands(object):
 
     """
-    Collect commands and stuff
+    A command and dependency gatherer.
     """
 
-    _collector = attr.ib(default=attr.Factory(functools.partial(gather.Collector, depth=1)), init=False)
-    _command_collector = attr.ib(default=attr.Factory(functools.partial(gather.Collector, depth=1)), init=False)
+    _collector = attr.ib(default=_COLLECTOR_FACTORY, init=False)
+    _command_collector = attr.ib(default=_COLLECTOR_FACTORY, init=False)
 
     def command(self,
                 name=None,
                 parser=argparse.ArgumentParser(),
                 dependencies=pyrsistent.v()):
+        """
+        Register as a command.
+
+        """
         transform = gather.Wrapper.glue((dependencies, parser))
         ret = self._command_collector.register(name, transform=transform)
         return ret
 
     def run(self, args, override_dependencies=pyrsistent.m()):
+        """
+        Run a command
+
+        """
         name, args = args[0], args[1:]
-        collection = self._command_collector.collect() 
+        collection = self._command_collector.collect()
         command = collection[name]
         func = command.original
         dependencies, parser = command.extra
@@ -40,16 +55,25 @@ class Commands(object):
                    name=None,
                    dependencies=pyrsistent.v(),
                    possible_dependencies=pyrsistent.v()):
+        """
+        Register as a dependency.
+
+        """
         glue = (dependencies, possible_dependencies)
-        transform = transform=gather.Wrapper.glue(glue)
+        transform = gather.Wrapper.glue(glue)
         ret = self._collector.register(name, transform=transform)
         return ret
 
     # Recursive implementation for now
     def mkgraph(self, things):
+        """
+        Resolve dependencies and generate them
+
+        """
         collection = self._collector.collect()
         ret = {}
-        def build(thing, on_route=pyrsistent.s()):
+
+        def _build(thing, on_route=pyrsistent.s()):
             if thing in on_route:
                 raise ValueError("circular dependency detected",
                                  thing, on_route)
@@ -61,12 +85,12 @@ class Commands(object):
             dependencies, possible_dependencies = plugin.extra
             my_dependencies, my_possible_dependencies = {}, {}
             for other_thing in dependencies:
-                my_dependencies[other_thing] = build(other_thing, on_route)
+                my_dependencies[other_thing] = _build(other_thing, on_route)
             for other_thing in possible_dependencies:
-                builder = functools.partial(build, other_thing, on_route)
+                builder = functools.partial(_build, other_thing, on_route)
                 my_possible_dependencies[other_thing] = builder
             ret[thing] = func(my_dependencies, my_possible_dependencies)
             return ret[thing]
         for thing in things:
-            build(thing)
+            _build(thing)
         return ret

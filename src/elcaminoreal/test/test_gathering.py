@@ -7,6 +7,7 @@ import unittest
 
 from elcaminoreal.test import some_plugins
 
+
 class DependencyResolverTester(unittest.TestCase):
 
     """
@@ -41,6 +42,7 @@ class DependencyResolverTester(unittest.TestCase):
         """
         result = some_plugins.COMMANDS.mkgraph(['foo_2'])
         self.assertEquals(result['foo_2'], dict(bar="I'm a bar"))
+
 
 class RunnerResolverTester(unittest.TestCase):
 
