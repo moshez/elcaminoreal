@@ -1,4 +1,5 @@
 import argparse
+import random
 
 import elcaminoreal
 
@@ -8,9 +9,21 @@ COMMANDS = elcaminoreal.Commands()
 def foo(dependencies, possible_dependencies):
     return dict(bar=dependencies['bar'])
 
-@COMMANDS.dependency(name="bar")
+@COMMANDS.dependency(possible_dependencies=["bar"])
+def foo_2(dependencies, possible_dependencies):
+    return dict(bar=possible_dependencies['bar']())
+
+@COMMANDS.dependency()
 def bar(dependencies, possible_dependencies):
     return "I'm a bar"
+
+@COMMANDS.dependency()
+def rand(dependencies, possible_dependencies):
+    return random.random()
+
+@COMMANDS.dependency(dependencies=["rand"])
+def needs_rand(dependencies, possible_dependencies):
+    return dict(rand=dependencies["rand"])
 
 @COMMANDS.dependency(name="baz")
 def baz(dependencies, possible_dependencies):
