@@ -22,3 +22,17 @@ class DependencyResolverTester(unittest.TestCase):
     def test_mkgraph_possible(self):
         result = some_plugins.COMMANDS.mkgraph(['foo_2'])
         self.assertEquals(result['foo_2'], dict(bar="I'm a bar"))
+
+class RunnerResolverTester(unittest.TestCase):
+
+    def test_run(self):
+        output = []
+        def my_print(*args):
+            output.append(' '.join(map(str, args)))
+        some_plugins.COMMANDS.run(['show', 'heee'],
+                                   override_dependencies=dict(print=my_print))
+        self.assertEquals(len(output), 1)
+        args, deps = output[0].split(None, 1)
+        self.assertIn('hee', args)
+        self.assertIn('foo', deps)
+        self.assertIn('bar', deps)

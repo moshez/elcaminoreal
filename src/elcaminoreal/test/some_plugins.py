@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import argparse
 import random
 
@@ -37,16 +39,20 @@ def robin(dependencies, possible_dependencies):
 def tuck(dependencies, possible_dependencies):
     return dependencies['robin']
 
-@COMMANDS.command(dependencies=['foo'],
+@COMMANDS.dependency(name='print')
+def _print(dependencies, possible_dependencies):
+    return print
+
+@COMMANDS.command(dependencies=['foo', 'print'],
                   parser=elcaminoreal.argparser(
                       elcaminoreal.argument('lala'),
                   ))
 def show(args, dependencies):
-    print(args, dependencies)
+    dependencies['print'](args, dependencies)
 
 @COMMANDS.command(dependencies=['bar'],
                   parser=elcaminoreal.argparser(
                       elcaminoreal.argument('wooo'),
                   ))
 def gowoo(args, dependencies):
-    print("woo", args, dependencies)
+    dependencies['print']("woo", args, dependencies)
