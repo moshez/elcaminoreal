@@ -14,7 +14,8 @@ setuptools.setup(
     author_email="zadka.moshe@gmail.com",
     packages=setuptools.find_packages(where='src'),
     package_dir={"": "src"},
-    install_requires=['attrs', 'incremental', 'gather', 'six', 'pyrsistent'],
+    install_requires=['attrs', 'incremental', 'gather', 'six', 'pyrsistent',
+                      'caparg'],
     entry_points={
         'gather': [
              "gather=elcaminoreal",

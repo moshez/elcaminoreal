@@ -8,10 +8,8 @@ would work for a real command.
 import os
 import sys
 
+import caparg as ca
 import elcaminoreal
-
-from elcaminoreal._args import argparser, argument
-
 
 COMMANDS = elcaminoreal.Commands()
 
@@ -43,9 +41,9 @@ def secret_filename(dependencies, _maybedeps):
 
 
 @COMMANDS.command(dependencies=['secret_filename'],
-                  parser=argparser(
-                      argument('--key-file', required=True),
-                  ))
+                  parser=ca.command('',
+                                    key_file=ca.option(type=str,
+                                                       required=True)))
 def create(args, dependencies):
     """
     Create a new secrets file (and save the private key).
@@ -56,10 +54,9 @@ def create(args, dependencies):
 
 
 @COMMANDS.command(dependencies=['secret_filename'],
-                  parser=argparser(
-                      argument('--name', required=True),
-                      argument('--value', required=True),
-                  ))
+                  parser=ca.command('',
+                                    name=ca.option(type=str, required=True),
+                                    value=ca.option(type=str, required=True)))
 def encrypt(args, dependencies):
     """
     Add a new encrypted secret to the dependencies.
@@ -71,10 +68,11 @@ def encrypt(args, dependencies):
 
 
 @COMMANDS.command(dependencies=['secret_filename'],
-                  parser=argparser(
-                      argument('--key-file', required=True),
-                      argument('--directory', required=True),
-                  ))
+                  parser=ca.command('',
+                                    key_file=ca.option(type=str,
+                                                       required=True),
+                                    directory=ca.option(type=str,
+                                                        required=True)))
 def decrypt(args, dependencies):
     """
     Decrypt the secrets from a file into a directory
