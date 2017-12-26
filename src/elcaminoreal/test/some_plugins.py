@@ -6,6 +6,7 @@ from __future__ import print_function
 
 import random
 
+import caparg as ca
 import elcaminoreal
 
 
@@ -83,8 +84,8 @@ def _print(_dependencies, _possible_dependencies):
 
 
 @COMMANDS.command(dependencies=['foo', 'print'],
-                  parser=elcaminoreal.argparser(
-                      elcaminoreal.argument('lala'),
+                  parser=ca.command('',
+                      lala=ca.option(type=str),
                   ))
 def show(args, dependencies):
     """
@@ -94,8 +95,8 @@ def show(args, dependencies):
 
 
 @COMMANDS.command(dependencies=['bar', 'print'],
-                  parser=elcaminoreal.argparser(
-                      elcaminoreal.argument('wooo'),
+                  parser=ca.command('',
+                      wooo=ca.option(type=str)
                   ))
 def gowoo(args, dependencies):
     """
@@ -105,9 +106,9 @@ def gowoo(args, dependencies):
 
 
 @COMMANDS.command(dependencies=['print'],
-                  parser=elcaminoreal.argparser(
-                      elcaminoreal.argument('--foo', required=False),
-                      elcaminoreal.argument('--bar', required=True),
+                  parser=ca.command('',
+                      foo=ca.option(type=str),
+                      bar=ca.option(type=str),
                   ))
 def interesting_args(args, dependencies):
     """

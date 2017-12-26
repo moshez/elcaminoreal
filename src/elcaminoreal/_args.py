@@ -27,7 +27,7 @@ class argument(object):
     name = attr.ib()
     required = attr.ib(default=False)
 
-    def add_to(self, parser):
+    def add_to(self, parser, subparsers):
         """
         Add myself parser
         """
@@ -36,3 +36,9 @@ class argument(object):
             kwargs['required'] = True
         parser.add_argument(self.name, **kwargs)
 # pylint: enable=invalid-name
+
+# pylint: disable=invalid-name
+@attr.s(frozen=True)
+class subcommand(object):
+
+    pass 

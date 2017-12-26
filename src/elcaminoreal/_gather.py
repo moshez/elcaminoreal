@@ -5,13 +5,11 @@ import argparse
 import functools
 
 import attr
-
+import caparg
+import gather
 import pyrsistent
 
-import gather
-
-_COLLECTOR_FACTORY = gather.Collector(functools.partial(gather.Collector,
-                                                        depth=1))
+_COLLECTOR_FACTORY = attr.Factory(functools.partial(gather.Collector, depth=1))
 
 
 @attr.s(frozen=True)
@@ -26,7 +24,7 @@ class Commands(object):
 
     def command(self,
                 name=None,
-                parser=argparse.ArgumentParser(),
+                parser=caparg.command(''),
                 dependencies=pyrsistent.v()):
         """
         Register as a command.
@@ -41,14 +39,16 @@ class Commands(object):
         Run a command
 
         """
-        name, args = args[0], args[1:]
         collection = self._command_collector.collect()
-        command = collection[name]
-        func = command.original
-        dependencies, parser = command.extra
+        subcommands = [thing.extra[1].rename(name)
+                       for name, thing in collection.items()]
+        command = caparg.command('', *subcommands)
+        parsed = command.parse(args)
+        subcommand = ' '.join(parsed['__caparg_subcommand__'])
+        func = collection[subcommand].original
+        dependencies, _ignored = collection[subcommand].extra
         graph = self.mkgraph(dependencies)
         graph.update(override_dependencies)
-        parsed = parser(args)
         return func(parsed, graph)
 
     def dependency(self,
