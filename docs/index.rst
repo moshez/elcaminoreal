@@ -6,4 +6,4 @@ El Camino Real
 
 
 .. automodule:: elcaminoreal
-    :members: Commands, argparser, argument
+    :members: Commands
