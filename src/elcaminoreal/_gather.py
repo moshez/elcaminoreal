@@ -1,7 +1,6 @@
 """
 Gather dependencies and commands
 """
-import argparse
 import functools
 
 import attr

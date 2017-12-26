@@ -85,19 +85,17 @@ def _print(_dependencies, _possible_dependencies):
 
 @COMMANDS.command(dependencies=['foo', 'print'],
                   parser=ca.command('',
-                      ca.positional('lala', type=str),
-                  ))
+                                    ca.positional('lala', type=str)))
 def show(args, dependencies):
     """
     Print then arguments.
     """
-    dependencies['print'](args, dependencies)
+    dependencies['print'](args, "BREAK", dependencies)
 
 
 @COMMANDS.command(dependencies=['bar', 'print'],
                   parser=ca.command('',
-                      wooo=ca.option(type=str)
-                  ))
+                                    wooo=ca.option(type=str)))
 def gowoo(args, dependencies):
     """
     Print 'woo' and then arguments.
@@ -107,9 +105,8 @@ def gowoo(args, dependencies):
 
 @COMMANDS.command(dependencies=['print'],
                   parser=ca.command('',
-                      foo=ca.option(type=str),
-                      bar=ca.option(type=str, required=True),
-                  ))
+                                    foo=ca.option(type=str),
+                                    bar=ca.option(type=str, required=True)))
 def interesting_args(args, dependencies):
     """
     Print arguments.
