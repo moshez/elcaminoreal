@@ -74,7 +74,7 @@ class RunnerResolverTester(unittest.TestCase):
 
         def _my_print(*args):
             output.append(' '.join(map(str, args)))
-        some_plugins.COMMANDS.run(['interesting_args', '--bar', 'ddd'],
+        some_plugins.COMMANDS.run(['interesting-args', '--bar', 'ddd'],
                                   override_dependencies=dict(print=_my_print))
         self.assertEquals(len(output), 1)
         my_foo, my_bar = output.pop().split(' ')

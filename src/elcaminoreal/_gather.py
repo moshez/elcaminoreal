@@ -38,7 +38,9 @@ class Commands(object):
         Run a command
 
         """
-        collection = self._command_collector.collect()
+        collection = {name.replace('_', '-'): value
+                      for name, value in
+                      self._command_collector.collect().items()}
         subcommands = [thing.extra[1].rename(name)
                        for name, thing in collection.items()]
         command = caparg.command('', *subcommands)
