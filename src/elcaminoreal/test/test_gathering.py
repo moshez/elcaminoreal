@@ -5,6 +5,9 @@ from __future__ import print_function
 
 import unittest
 
+import six
+
+import elcaminoreal
 from elcaminoreal.test import some_plugins
 
 
@@ -87,3 +90,12 @@ class RunnerResolverTester(unittest.TestCase):
         """
         with self.assertRaises(BaseException):
             some_plugins.COMMANDS.run(['interesting_args', '--foo', 'ddd'])
+
+    def test_error_redirect(self):
+        """
+        """
+        filep = six.moves.StringIO('w')
+        with elcaminoreal.errors_to(filep):
+            some_plugins.COMMANDS.run(['no-such-command'])
+        error_message = filep.getvalue().splitlines()
+        self.assertEquals(error_message.pop(0), 'Usage:')
