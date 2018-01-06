@@ -93,6 +93,7 @@ class RunnerResolverTester(unittest.TestCase):
 
     def test_error_redirect(self):
         """
+        Error redirect sends error message to file pointer
         """
         filep = six.moves.StringIO('w')
         with elcaminoreal.errors_to(filep):

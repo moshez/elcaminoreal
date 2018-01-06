@@ -1,6 +1,10 @@
+"""
+Capture argument parsing errors
+"""
 import contextlib
 
 import caparg
+
 
 @contextlib.contextmanager
 def errors_to(filep):
