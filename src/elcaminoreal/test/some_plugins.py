@@ -21,6 +21,18 @@ def a_foo(dependencies, _possible_dependencies):
     return dict(bar=dependencies['bar'])
 
 
+@COMMANDS.dependency(dependencies=["bar", "quux"],
+                     possible_dependencies=["foo"],
+                     regular=True)
+def regular(bar, quux, build_foo):
+    """
+    Depend on bar, maybe on foo
+
+    Use regular arguments.
+    """
+    return dict(bar=bar, quux=quux, foo=build_foo())
+
+
 @COMMANDS.dependency(possible_dependencies=["bar"])
 def foo_2(_dependencies, possible_dependencies):
     """
@@ -35,6 +47,13 @@ def a_bar(_dependencies, _possible_dependencies):
     Return a bar-like object.
     """
     return "I'm a bar"
+
+@COMMANDS.dependency(name="quux")
+def a_quux(_dependencies, _possible_dependencies):
+    """
+    Return a quux-like object.
+    """
+    return "I'm a quux"
 
 
 @COMMANDS.dependency()
@@ -81,6 +100,28 @@ def _print(_dependencies, _possible_dependencies):
     Return a function to display things on the terminal.
     """
     return print
+
+@COMMANDS.dependency(name='output')
+def dummy_output(_dependencies, _possible_dependencies):
+    """
+    Literally do nothing.
+
+    This is designed for being overridden.
+    """
+
+
+
+@COMMANDS.command(dependencies=['foo', 'output'],
+                  parser=ca.command('',
+                                    ca.positional('lili', type=str)),
+                  regular=True)
+def regular_command(foo, lili, output):
+    """
+    Use regular arguments
+
+    Output results
+    """
+    output(foo, lili)
 
 
 @COMMANDS.command(dependencies=['foo', 'print'],

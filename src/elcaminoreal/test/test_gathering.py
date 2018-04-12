@@ -46,6 +46,15 @@ class DependencyResolverTester(unittest.TestCase):
         result = some_plugins.COMMANDS.mkgraph(['foo_2'])
         self.assertEquals(result['foo_2'], dict(bar="I'm a bar"))
 
+    def test_mkgraph_regular(self):
+        """
+        mkgraph regular functions work
+        """
+        result = some_plugins.COMMANDS.mkgraph(['regular'])
+        self.assertEquals(result['regular']['bar'], result['bar'])
+        self.assertEquals(result['regular']['quux'], result['quux'])
+        self.assertEquals(result['regular']['foo'], result['foo'])
+
 
 class RunnerResolverTester(unittest.TestCase):
 
@@ -100,3 +109,17 @@ class RunnerResolverTester(unittest.TestCase):
             some_plugins.COMMANDS.run(['no-such-command'])
         error_message = filep.getvalue().splitlines()
         self.assertEquals(error_message.pop(0), 'Usage:')
+
+    def test_regular(self):
+        """
+        Asking for regular arguments calls functions with argument names
+        """
+        output = []
+
+        def _my_output(*args):
+            output.append(args)
+        some_plugins.COMMANDS.run(['regular-command', 'thing'],
+                                  override_dependencies=dict(output=_my_output))
+        self.assertEquals(len(output), 1)
+        self.assertEquals(output[0][0]['bar'], "I'm a bar")
+        self.assertEquals(output[0][1], 'thing')
