@@ -118,8 +118,9 @@ class RunnerResolverTester(unittest.TestCase):
 
         def _my_output(*args):
             output.append(args)
+        dependencies = dict(output=_my_output)
         some_plugins.COMMANDS.run(['regular-command', 'thing'],
-                                  override_dependencies=dict(output=_my_output))
+                                  override_dependencies=dependencies)
         self.assertEquals(len(output), 1)
         self.assertEquals(output[0][0]['bar'], "I'm a bar")
         self.assertEquals(output[0][1], 'thing')

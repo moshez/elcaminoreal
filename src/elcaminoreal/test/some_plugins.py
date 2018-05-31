@@ -48,6 +48,7 @@ def a_bar(_dependencies, _possible_dependencies):
     """
     return "I'm a bar"
 
+
 @COMMANDS.dependency(name="quux")
 def a_quux(_dependencies, _possible_dependencies):
     """
@@ -101,6 +102,7 @@ def _print(_dependencies, _possible_dependencies):
     """
     return print
 
+
 @COMMANDS.dependency(name='output')
 def dummy_output(_dependencies, _possible_dependencies):
     """
@@ -108,7 +110,6 @@ def dummy_output(_dependencies, _possible_dependencies):
 
     This is designed for being overridden.
     """
-
 
 
 @COMMANDS.command(dependencies=['foo', 'output'],
