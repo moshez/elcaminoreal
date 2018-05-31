@@ -51,14 +51,13 @@ class Commands(object):
         dependencies, _ignored, regular = collection[subcommand].extra
         graph = self.mkgraph(dependencies)
         graph.update(override_dependencies)
-        if regular:
-            args = {dependency: graph[dependency]
-                    for dependency in dependencies}
-            args.update(parsed)
-            del args['__caparg_subcommand__']
-            return func(**args)
-        else:
+        if not regular:
             return func(parsed, graph)
+        args = {dependency: graph[dependency]
+                for dependency in dependencies}
+        args.update(parsed)
+        del args['__caparg_subcommand__']
+        return func(**args)
 
     def dependency(self,
                    name=None,
