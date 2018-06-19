@@ -7,5 +7,5 @@ Provides elcaminoreal version information.
 
 from incremental import Version
 
-__version__ = Version('elcaminoreal', 18, 1, 1)
+__version__ = Version('elcaminoreal', 18, 6, 0)
 __all__ = ["__version__"]
