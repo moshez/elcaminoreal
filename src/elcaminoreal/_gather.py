@@ -12,11 +12,14 @@ _COLLECTOR_FACTORY = attr.Factory(functools.partial(gather.Collector, depth=1))
 
 @attr.s(frozen=True)
 class ExtraData(object):
-    parser=attr.ib(default=caparg.command(''))
-    dependencies=attr.ib(default=pyrsistent.v())
-    aliases=attr.ib(default=pyrsistent.v())
-    regular=attr.ib(default=False)
-    
+    """
+    Metadata about commands
+    """
+    parser = attr.ib(default=caparg.command(''))
+    dependencies = attr.ib(default=pyrsistent.v())
+    aliases = attr.ib(default=pyrsistent.v())
+    regular = attr.ib(default=False)
+
 
 @attr.s(frozen=True)
 class Commands(object):
