@@ -10,6 +10,7 @@ import pyrsistent
 
 _COLLECTOR_FACTORY = attr.Factory(functools.partial(gather.Collector, depth=1))
 
+
 @attr.s(frozen=True)
 class ExtraData(object):
     """
