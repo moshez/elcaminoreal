@@ -78,6 +78,20 @@ class RunnerResolverTester(unittest.TestCase):
         self.assertIn('foo', deps)
         self.assertIn('bar', deps)
 
+    def test_aliases(self):
+        """
+        Run calls the aliased command
+        """
+        output = []
+
+        def _my_print(*args):
+            output.append(' '.join(map(str, args)))
+        some_plugins.COMMANDS.run(['view', 'heee'],
+                                  override_dependencies=dict(print=_my_print))
+        self.assertEquals(len(output), 1)
+        args, deps = output[0].split('BREAK', 1)
+        self.assertIn('hee', args)
+
     def test_args(self):
         """
         Argument parsing respects required/not-required
