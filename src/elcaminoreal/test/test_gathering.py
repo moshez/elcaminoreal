@@ -89,7 +89,7 @@ class RunnerResolverTester(unittest.TestCase):
         some_plugins.COMMANDS.run(['view', 'heee'],
                                   override_dependencies=dict(print=_my_print))
         self.assertEquals(len(output), 1)
-        args, deps = output[0].split('BREAK', 1)
+        args, _ignored = output[0].split('BREAK', 1)
         self.assertIn('hee', args)
 
     def test_args(self):
