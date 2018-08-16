@@ -59,7 +59,7 @@ class Commands(object):
         extra = collection[subcommand].extra
         graph = self.mkgraph(extra.dependencies)
         graph.update(override_dependencies)
-        if not regular:
+        if not extra.regular:
             return func(parsed, graph)
         args = {dependency: graph[dependency]
                 for dependency in dependencies}
