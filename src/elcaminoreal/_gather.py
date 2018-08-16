@@ -62,7 +62,7 @@ class Commands(object):
         if not extra.regular:
             return func(parsed, graph)
         args = {dependency: graph[dependency]
-                for dependency in dependencies}
+                for dependency in extra.dependencies}
         args.update(parsed)
         del args['__caparg_subcommand__']
         return func(**args)
