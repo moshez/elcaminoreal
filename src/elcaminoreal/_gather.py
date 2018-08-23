@@ -43,10 +43,9 @@ class Commands(object):
         ret = self._command_collector.register(name, transform=transform)
         return ret
 
-    def run(self, args, override_dependencies=pyrsistent.m()):
+    def get_commands(self):
         """
-        Run a command
-
+        Get all commands
         """
         collection = {name.replace('_', '-'): value
                       for name, value in
@@ -54,6 +53,14 @@ class Commands(object):
         for thing in list(collection.values()):
             for alias in thing.extra.aliases:
                 collection[alias] = thing
+        return collection
+
+    def run(self, args, override_dependencies=pyrsistent.m()):
+        """
+        Run a command
+
+        """
+        collection = self.get_commands()
         subcommands = [thing.extra.parser.rename(name)
                        for name, thing in collection.items()]
         command = caparg.command('', *subcommands)
