@@ -12,6 +12,17 @@ _COLLECTOR_FACTORY = attr.Factory(functools.partial(gather.Collector, depth=1))
 
 
 @attr.s(frozen=True)
+class ExtraData(object):
+    """
+    Metadata about commands
+    """
+    parser = attr.ib(default=caparg.command(''))
+    dependencies = attr.ib(default=pyrsistent.v())
+    aliases = attr.ib(default=pyrsistent.v())
+    regular = attr.ib(default=False)
+
+
+@attr.s(frozen=True)
 class Commands(object):
 
     """
@@ -23,14 +34,12 @@ class Commands(object):
 
     def command(self,
                 name=None,
-                parser=caparg.command(''),
-                dependencies=pyrsistent.v(),
-                regular=False):
+                **kwargs):
         """
         Register as a command.
 
         """
-        transform = gather.Wrapper.glue((dependencies, parser, regular))
+        transform = gather.Wrapper.glue(ExtraData(**kwargs))
         ret = self._command_collector.register(name, transform=transform)
         return ret
 
@@ -42,19 +51,22 @@ class Commands(object):
         collection = {name.replace('_', '-'): value
                       for name, value in
                       self._command_collector.collect().items()}
-        subcommands = [thing.extra[1].rename(name)
+        for thing in list(collection.values()):
+            for alias in thing.extra.aliases:
+                collection[alias] = thing
+        subcommands = [thing.extra.parser.rename(name)
                        for name, thing in collection.items()]
         command = caparg.command('', *subcommands)
         parsed = command.parse(args)
         subcommand = ' '.join(parsed['__caparg_subcommand__'])
         func = collection[subcommand].original
-        dependencies, _ignored, regular = collection[subcommand].extra
-        graph = self.mkgraph(dependencies)
+        extra = collection[subcommand].extra
+        graph = self.mkgraph(extra.dependencies)
         graph.update(override_dependencies)
-        if not regular:
+        if not extra.regular:
             return func(parsed, graph)
         args = {dependency: graph[dependency]
-                for dependency in dependencies}
+                for dependency in extra.dependencies}
         args.update(parsed)
         del args['__caparg_subcommand__']
         return func(**args)

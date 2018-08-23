@@ -126,6 +126,7 @@ def regular_command(foo, lili, output):
 
 
 @COMMANDS.command(dependencies=['foo', 'print'],
+                  aliases=['view'],
                   parser=ca.command('',
                                     ca.positional('lala', type=str)))
 def show(args, dependencies):
