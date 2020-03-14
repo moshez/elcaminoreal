@@ -50,6 +50,19 @@ def create(secret_filename, key_file):
         key_file,
         secret_filename))
 
+@COMMANDS.command(dependencies=['secret_filename'],
+                  name="view key",
+                  parser=Parser('dummy', flags=[
+                                     Flag('--key', missing=ERROR)]))
+def _view(args, dependencies):
+    """
+    Add a new encrypted secret to the dependencies.
+    """
+    sys.stdout.write("adding to {} name {} value {}\n".format(
+        dependencies['secret_filename'],
+        args.name,
+        args.value))
+
 
 @COMMANDS.command(dependencies=['secret_filename'],
                   parser=Parser('dummy', flags=[

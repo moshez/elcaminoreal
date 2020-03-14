@@ -61,11 +61,18 @@ class Commands(object):
 
         """
         collection = self.get_commands()
-        command = Parser('root')
+        parsers = {}
         for name, thing in collection.items():
+            parts = name.split()
+            for part in parts[:-1]:
+                part_key = (part,)
+                if part_key not in my_command.subprs_map:
+                    my_command.add(Parser(part))
+                my_command = my_command.subprs_map[part_key]
             parser = thing.extra.parser
-            parser.name = name
-            command.add(parser)
+            parser.name = parts[-1]
+            my_command.add(parser)
+        command = Parser('root')
         parsed = command.parse([''] + args)
         subcommand = ' '.join(parsed.subcmds)
         func = collection[subcommand].original
