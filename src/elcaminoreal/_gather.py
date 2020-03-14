@@ -4,7 +4,7 @@ Gather dependencies and commands
 import functools
 
 import attr
-import caparg
+from face import Parser
 import gather
 import pyrsistent
 
@@ -16,7 +16,7 @@ class ExtraData(object):
     """
     Metadata about commands
     """
-    parser = attr.ib(default=caparg.command(''))
+    parser = attr.ib(default=Parser('dummy'))
     dependencies = attr.ib(default=pyrsistent.v())
     aliases = attr.ib(default=pyrsistent.v())
     regular = attr.ib(default=False)
@@ -61,21 +61,21 @@ class Commands(object):
 
         """
         collection = self.get_commands()
-        subcommands = [thing.extra.parser.rename(name)
-                       for name, thing in collection.items()]
-        command = caparg.command('', *subcommands)
-        parsed = command.parse(args)
-        subcommand = ' '.join(parsed['__caparg_subcommand__'])
+        command = Parser('root')
+        for name, thing in collection.items():
+            parser = thing.extra.parser
+            parser.name = name
+            command.add(parser)
+        parsed = command.parse([''] + args)
+        subcommand = ' '.join(parsed.subcmds)
         func = collection[subcommand].original
         extra = collection[subcommand].extra
         graph = self.mkgraph(extra.dependencies)
         graph.update(override_dependencies)
-        if not extra.regular:
-            return func(parsed, graph)
         args = {dependency: graph[dependency]
                 for dependency in extra.dependencies}
-        args.update(parsed)
-        del args['__caparg_subcommand__']
+        args.update(parsed.flags)
+        del args['flagfile']
         return func(**args)
 
     def dependency(self,
