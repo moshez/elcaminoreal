@@ -8,11 +8,10 @@ would work for a real command.
 import os
 import sys
 
-import caparg as ca
+from face import Parser, Flag, ERROR
 import elcaminoreal
 
 COMMANDS = elcaminoreal.Commands()
-
 
 @COMMANDS.dependency()
 def current_directory(_deps, _maybedeps):
@@ -41,22 +40,34 @@ def secret_filename(dependencies, _maybedeps):
 
 
 @COMMANDS.command(dependencies=['secret_filename'],
-                  parser=ca.command('',
-                                    key_file=ca.option(type=str,
-                                                       required=True)))
-def create(args, dependencies):
+                  parser=Parser('dummy', flags=[
+                                           Flag("--key-file", missing=ERROR)]))
+def create(secret_filename, key_file):
     """
     Create a new secrets file (and save the private key).
     """
     sys.stdout.write("writing key to {} and public data to {}\n".format(
-        args.key_file,
-        dependencies['secret_filename']))
+        key_file,
+        secret_filename))
+
+@COMMANDS.command(dependencies=['secret_filename'],
+                  name="view key",
+                  parser=Parser('dummy', flags=[
+                                     Flag('--key', missing=ERROR)]))
+def _view(args, dependencies):
+    """
+    Add a new encrypted secret to the dependencies.
+    """
+    sys.stdout.write("adding to {} name {} value {}\n".format(
+        dependencies['secret_filename'],
+        args.name,
+        args.value))
 
 
 @COMMANDS.command(dependencies=['secret_filename'],
-                  parser=ca.command('',
-                                    name=ca.option(type=str, required=True),
-                                    value=ca.option(type=str, required=True)))
+                  parser=Parser('dummy', flags=[
+                                     Flag('--name', missing=ERROR),
+                                     Flag('--value', missing=ERROR),]))
 def encrypt(args, dependencies):
     """
     Add a new encrypted secret to the dependencies.
@@ -68,11 +79,11 @@ def encrypt(args, dependencies):
 
 
 @COMMANDS.command(dependencies=['secret_filename'],
-                  parser=ca.command('',
-                                    key_file=ca.option(type=str,
-                                                       required=True),
-                                    directory=ca.option(type=str,
-                                                        required=True)))
+                  parser=Parser('dummy',
+                                 flags=[
+                                    Flag('--key-file', missing=ERROR),
+                                    Flag('--directory', missing=ERROR),
+                                 ]))
 def decrypt(args, dependencies):
     """
     Decrypt the secrets from a file into a directory
